@@ -49,8 +49,8 @@ public interface PortifolioRepository extends JpaRepository<PortifolioEntity, UU
     List<PortifolioEntity> findByDescricaoEmpresa(String descricaoEmpresa);
     List<PortifolioEntity> findBySobreEmpresa(String sobreEmpresa);
     List<PortifolioEntity> findByLinkWebsiteEmpresa(String linkWebsiteEmpresa);
-    List<PortifolioEntity> findByDataEmpresaCertificada(String dataEmpresaCertificada);
-    List<PortifolioEntity> findByFkPrestadoraServico(String fkPrestadoraServico);
+    List<PortifolioEntity> findByDataEmpresaCertificada(LocalDate dataEmpresaCertificada);
+    List<PortifolioEntity> findByFkPrestadoraServico(UUID fkPrestadoraServico);
 
 }
 

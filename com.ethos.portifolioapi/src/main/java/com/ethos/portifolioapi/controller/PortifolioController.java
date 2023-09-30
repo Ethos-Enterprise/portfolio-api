@@ -31,16 +31,35 @@ public class PortifolioController {
     public List<PortifolioResponse> getAllPortifolio(@RequestParam(value = "urlImagemPerfil", required = false) String urlImagemPerfil, @RequestParam(value = "urlBackgroundPerfil", required = false) String urlBackgroundPerfil, @RequestParam(value = "descricaoEmpresa", required = false) String descricaoEmpresa, @RequestParam(value = "sobreEmpresa", required = false) String sobreEmpresa, @RequestParam(value = "linkWebsiteEmpresa", required = false) String linkWebsiteEmpresa, @RequestParam(value = "dataEmpresaCertificada", required = false) LocalDate dataEmpresaCertificada, @RequestParam(value = "fkPrestadoraServico", required = false) UUID fkPrestadoraServico) {
         if (urlImagemPerfil != null) {
             return portifolioService.getPortifolioByUrlImagemPerfil(urlImagemPerfil);
-        } else if (cnpj != null) {
-            return empresaService.getEmpresaByCnpj(cnpj);
-        } else if (telefone != null) {
-            return empresaService.getEmpresaByTelefone(telefone);
-        } else if (setor != null) {
-            return empresaService.getEmpresaBySetor(setor);
+        } else if (urlBackgroundPerfil != null) {
+            return portifolioService.getPortifolioByUrlBackgroundPerfil(urlBackgroundPerfil);
+        } else if (descricaoEmpresa != null) {
+            return portifolioService.getPortifolioByDescricaoEmpresa(descricaoEmpresa);
+        } else if (sobreEmpresa != null) {
+            return portifolioService.getPortifolioBySobreEmpresa(sobreEmpresa);
+        }else if (linkWebsiteEmpresa != null) {
+            return portifolioService.getPortifolioByLinkWebsiteEmpresa(linkWebsiteEmpresa);
+        }else if (dataEmpresaCertificada != null) {
+            return portifolioService.getPortifolioByDataEmpresaCertificada(dataEmpresaCertificada);
+        }else if (fkPrestadoraServico != null) {
+            return portifolioService.getPortifolioByFkPrestadoraServico(fkPrestadoraServico);
         }
-        return empresaService.getAllEmpresa();
+        return portifolioService.getAllPortifolio();
     }
 
+    @GetMapping("/{id}")
+    public PortifolioResponse getPortifolioById(@PathVariable UUID id) {
+        return portifolioService.getPortifolioById(id);
+    }
 
-//    putPortifolioById
+    @PutMapping("/{id}")
+    public PortifolioResponse putPortifolioById(@PathVariable UUID id, @RequestBody PortifolioRequest request) {
+        return portifolioService.putPortifolioById(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deletePortifolioById(@PathVariable UUID id) {
+        return portifolioService.deletePortifolioById(id);
+    }
+
 }

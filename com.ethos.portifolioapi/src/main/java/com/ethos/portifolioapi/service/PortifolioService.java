@@ -12,6 +12,7 @@ import com.ethos.portifolioapi.repository.PortifolioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,5 +94,35 @@ public class PortifolioService {
         List<PortifolioEntity> portifolio = repository.findByUrlImagemPerfil(urlImagemPerfil);
         return portifolio.stream().map(portifolioResponseMapper::from).toList();
     }
+
+    public List<PortifolioResponse> getPortifolioByUrlBackgroundPerfil(String urlBackgroundPerfil) {
+        List<PortifolioEntity> portifolio = repository.findByUrlBackgroundPerfil(urlBackgroundPerfil);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+
+    public List<PortifolioResponse> getPortifolioByDescricaoEmpresa(String descricaoEmpresa) {
+        List<PortifolioEntity> portifolio = repository.findByDescricaoEmpresa(descricaoEmpresa);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+    public List<PortifolioResponse> getPortifolioBySobreEmpresa(String sobreEmpresa) {
+        List<PortifolioEntity> portifolio = repository.findBySobreEmpresa(sobreEmpresa);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+    public List<PortifolioResponse> getPortifolioByLinkWebsiteEmpresa(String linkWebsiteEmpresa) {
+        List<PortifolioEntity> portifolio = repository.findByLinkWebsiteEmpresa(linkWebsiteEmpresa);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+
+    public List<PortifolioResponse> getPortifolioByDataEmpresaCertificada(LocalDate dataEmpresaCertificada) {
+        List<PortifolioEntity> portifolio = repository.findByDataEmpresaCertificada(dataEmpresaCertificada);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+
+
+    public List<PortifolioResponse> getPortifolioByFkPrestadoraServico(UUID fkPrestadoraServico) {
+        List<PortifolioEntity> portifolio = repository.findByFkPrestadoraServico(fkPrestadoraServico);
+        return portifolio.stream().map(portifolioResponseMapper::from).toList();
+    }
+
 
 }
