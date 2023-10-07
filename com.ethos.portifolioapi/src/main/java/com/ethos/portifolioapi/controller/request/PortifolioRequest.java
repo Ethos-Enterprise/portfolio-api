@@ -14,7 +14,7 @@ public record PortifolioRequest (@NotBlank(message = "Erro ao importar imagem") 
                                 @NotBlank(message = "Texto sobre em branco") @Size(min=1, max=1000, message = "O campo sobre esta fora do limite de caracteres") String sobreEmpresa,
                                 @NotBlank(message = "Link inválido") String linkWebsiteEmpresa,
                                 @NotBlank(message = "Data inválida") LocalDate dataEmpresaCertificada,
-                                @NotBlank(message = "Fk não encontrada") UUID fkPrestadoraServico){
+                                 UUID fkPrestadoraServico){
 
 
 

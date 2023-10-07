@@ -10,7 +10,7 @@ import org.hibernate.annotations.Immutable;
 import java.time.LocalDate;
 import java.util.UUID;
 @Getter
-@Table(name = "PORTIFOLIO")
+@Table(name = "PORTFOLIO")
 @Entity
 @Immutable
 public class PortifolioEntity {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/v1.0/portifolios")
+@RequestMapping(path = "/v1.0/portfolios")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class PortifolioController {
@@ -23,12 +23,13 @@ public class PortifolioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PortifolioResponse postPortifolio(@RequestBody @Valid PortifolioRequest request) {
+    public PortifolioResponse postPortfolio(@RequestBody  PortifolioRequest request) {
         return portifolioService.postPotifolio(request);
+
     }
 
     @GetMapping
-    public List<PortifolioResponse> getAllPortifolio(@RequestParam(value = "urlImagemPerfil", required = false) String urlImagemPerfil, @RequestParam(value = "urlBackgroundPerfil", required = false) String urlBackgroundPerfil, @RequestParam(value = "descricaoEmpresa", required = false) String descricaoEmpresa, @RequestParam(value = "sobreEmpresa", required = false) String sobreEmpresa, @RequestParam(value = "linkWebsiteEmpresa", required = false) String linkWebsiteEmpresa, @RequestParam(value = "dataEmpresaCertificada", required = false) LocalDate dataEmpresaCertificada, @RequestParam(value = "fkPrestadoraServico", required = false) UUID fkPrestadoraServico) {
+    public List<PortifolioResponse> getAllPortfolio(@RequestParam(value = "urlImagemPerfil", required = false) String urlImagemPerfil, @RequestParam(value = "urlBackgroundPerfil", required = false) String urlBackgroundPerfil, @RequestParam(value = "descricaoEmpresa", required = false) String descricaoEmpresa, @RequestParam(value = "sobreEmpresa", required = false) String sobreEmpresa, @RequestParam(value = "linkWebsiteEmpresa", required = false) String linkWebsiteEmpresa, @RequestParam(value = "dataEmpresaCertificada", required = false) LocalDate dataEmpresaCertificada, @RequestParam(value = "fkPrestadoraServico", required = false) UUID fkPrestadoraServico) {
         if (urlImagemPerfil != null) {
             return portifolioService.getPortifolioByUrlImagemPerfil(urlImagemPerfil);
         } else if (urlBackgroundPerfil != null) {
@@ -48,17 +49,17 @@ public class PortifolioController {
     }
 
     @GetMapping("/{id}")
-    public PortifolioResponse getPortifolioById(@PathVariable UUID id) {
+    public PortifolioResponse getPortfolioById(@PathVariable UUID id) {
         return portifolioService.getPortifolioById(id);
     }
 
     @PutMapping("/{id}")
-    public PortifolioResponse putPortifolioById(@PathVariable UUID id, @RequestBody PortifolioRequest request) {
+    public PortifolioResponse putPortfolioById(@PathVariable UUID id, @RequestBody PortifolioRequest request) {
         return portifolioService.putPortifolioById(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public String deletePortifolioById(@PathVariable UUID id) {
+    public String deletePortfolioById(@PathVariable UUID id) {
         return portifolioService.deletePortifolioById(id);
     }
 

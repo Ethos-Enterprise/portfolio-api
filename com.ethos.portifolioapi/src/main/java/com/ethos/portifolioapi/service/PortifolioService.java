@@ -74,7 +74,7 @@ public class PortifolioService {
         if (request.linkWebsiteEmpresa() != null && !request.linkWebsiteEmpresa().isEmpty()) {
             repository.updateUrlLinkWebsiteEmpresa(request.linkWebsiteEmpresa(), id);
         }
-        if (request.dataEmpresaCertificada() != null && !request.dataEmpresaCertificada().isEqual(null)) {
+        if (request.dataEmpresaCertificada() != null) {
             repository.updateUrlDataEmpresaCertificada(request.dataEmpresaCertificada(), id);
         }
 
