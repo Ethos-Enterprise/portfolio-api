@@ -1,4 +1,4 @@
-package com.ethos.portifolioapi.repository.entity;
+package com.ethos.portfolioapi.repository.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Table(name = "PORTFOLIO")
 @Entity
 @Immutable
-public class PortifolioEntity {
+public class PortfolioEntity {
     @Id
     UUID id;
     String urlImagemPerfil;
@@ -24,13 +24,13 @@ public class PortifolioEntity {
     LocalDate dataEmpresaCertificada;
     UUID fkPrestadoraServico;
 
-    public PortifolioEntity() {
+    public PortfolioEntity() {
 
     }
 
     @Builder(toBuilder = true)
 
-    public PortifolioEntity(UUID id, String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
+    public PortfolioEntity(UUID id, String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
         this.id = UUID.randomUUID();
         this.urlImagemPerfil = urlImagemPerfil;
         this.urlBackgroundPerfil = urlBackgroundPerfil;

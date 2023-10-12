@@ -1,4 +1,4 @@
-package com.ethos.portifolioapi;
+package com.ethos.portfolioapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

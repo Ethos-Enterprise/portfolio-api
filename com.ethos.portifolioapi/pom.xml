@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ethos</groupId>
-	<artifactId>com.ethos.portifolioapi</artifactId>
+	<artifactId>portfolioapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>com.ethos.portifolioapi</name>
+	<name>com.ethos.portfolioapi</name>
 	<description>API de portifolio ETHOS</description>
 	<properties>
 		<java.version>17</java.version>

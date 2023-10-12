@@ -1,15 +1,15 @@
-package com.ethos.portifolioapi.model;
+package com.ethos.portfolioapi.model;
 
 import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record Portifolio(String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa,
+public record Portfolio(String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa,
                          String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico){
 
     @Builder(toBuilder = true)
-    public Portifolio(String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
+    public Portfolio(String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
         this.urlImagemPerfil = urlImagemPerfil;
         this.urlBackgroundPerfil = urlBackgroundPerfil;
         this.descricaoEmpresa = descricaoEmpresa;

@@ -1,7 +1,7 @@
-package com.ethos.portifolioapi.exceptionhandler;
+package com.ethos.portfolioapi.exceptionhandler;
 
-import com.ethos.portifolioapi.exception.PortifolioJaExisteException;
-import com.ethos.portifolioapi.exception.PortifolioNaoExisteException;
+import com.ethos.portfolioapi.exception.PortfolioJaExisteException;
+import com.ethos.portfolioapi.exception.PortfolioNaoExisteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class PortifolioExceptionHandler {
+public class PortfolioExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail methodArgumentNotValidException(MethodArgumentNotValidException exception) {
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -43,19 +43,19 @@ public class PortifolioExceptionHandler {
     }
 
 
-    @ExceptionHandler(PortifolioNaoExisteException.class)
-    public ProblemDetail portifolioNaoExisteException(PortifolioNaoExisteException exception) {
+    @ExceptionHandler(PortfolioNaoExisteException.class)
+    public ProblemDetail portfolioNaoExisteException(PortfolioNaoExisteException exception) {
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setDetail(exception.getMessage());
-        problemDetail.setTitle("Portifolio não encontrado");
+        problemDetail.setTitle("Portfolio não encontrado");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
-    @ExceptionHandler(PortifolioJaExisteException.class)
-    public ProblemDetail portifolioJaExisteException(PortifolioJaExisteException exception) {
+    @ExceptionHandler(PortfolioJaExisteException.class)
+    public ProblemDetail portfolioJaExisteException(PortfolioJaExisteException exception) {
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
-        problemDetail.setTitle("Portifolio já cadastrado");
+        problemDetail.setTitle("Portfolio já cadastrado");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
