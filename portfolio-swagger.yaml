@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  title: API de cadastro de Portfolios
+  description: API com funcionalidade para criação, edição e exclusão de portfolios das empresas.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Portfólio
+paths:
+  /v1.0/portfolios:
+    post:
+      tags:
+        - Portfólio
+      requestBody:
+          description: Dados do novo portfolio
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioInput'
+      responses:
+        '201':
+          description: Portfolio criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioInput'
+    get:
+      summary: busca todos os portfólios cadastrados
+      tags:
+        - Portfólio
+      responses:
+        '200':
+          description: lista de portfólios obtidas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortfolioResponse'
+  /v1.0/portfolios/{id}:              
+    get:
+      summary: busca portfólios cadastrados por ID
+      tags:
+        - Portfólio
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+            format: uuid
+          description: identificador da empresa
+          required: true 
+      responses:
+        '200':
+          description: lista de portfólios obtidas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortfolioResponse'
+        '404':
+          description: portfolio não encontrado.  
+    put:
+      summary: atualiza portfólio pelo ID
+      tags:
+        - Portfólio
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+            format: uuid
+          description: identificador da empresa.
+          required: true
+      requestBody:
+          description: Dados do novo portfolio
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioInput'
+      responses:
+        '200':
+          description: portfólio atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortfolioResponse'
+        '404':
+          description: portfólio não encontrado.
+    delete:
+      summary: deleta portfolio por ID.
+      tags:
+        - Portfólio
+      parameters:
+        - name: id
+          in: path
+          schema: 
+            type: string
+            format: uuid
+          description: identificador de portfólio.
+          required: true
+      responses:
+        '200':
+          description: portfólio atualizado com sucesso.
+          
+                
+                
+
+
+components:
+  schemas:
+    PortfolioInput:
+      properties:
+        urlImagemPerfil:
+          type: string
+          example: imagem_teste.jpeg
+        urlBackgroundPerfil:
+          type: string
+          example: imagem_background_teste.jpeg
+        descricaoEmpresa:
+          type: string
+          example: Descrição empresas
+        linkWebsiteEmpresa:
+          type: string
+          example: www.empresaWebSite.com
+        dataEmpresaCertificada:
+          type: string
+          example: 2023-01-01
+        fkPrestadoraServico:
+          type: string
+          example: UUID
+    PortfolioResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID da portifolio
+        urlImagemPerfil:
+          type: string
+          example: Imagem_perfil.jpeg
+        urlBackgroundPerfil:
+          type: string
+          example: imagem_background.jpeg
+        descricaoEmpresa:
+          type: string
+          example: Descrição empresa
+        linkWebsiteEmpresa:
+          type: string
+          example: www.empresaWebSite.com
+        dataEmpresaCertificada:
+          type: string
+          example: 2023-01-01
+        fkPrestadoraServico:
+          type: string
+          example: uuid
+
+
