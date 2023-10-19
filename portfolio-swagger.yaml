@@ -126,6 +126,9 @@ components:
         descricaoEmpresa:
           type: string
           example: Descrição empresas
+        sobreEmpresa:
+          type: string
+          example: empresa...
         linkWebsiteEmpresa:
           type: string
           example: www.empresaWebSite.com
@@ -150,6 +153,9 @@ components:
         descricaoEmpresa:
           type: string
           example: Descrição empresa
+        sobreEmpresa:
+          type: string
+          example: empresa...
         linkWebsiteEmpresa:
           type: string
           example: www.empresaWebSite.com
