@@ -16,13 +16,14 @@ import java.util.UUID;
 public class PortfolioEntity {
     @Id
     UUID id;
-    String urlImagemPerfil;
+    public String urlImagemPerfil;
     String urlBackgroundPerfil;
     String descricaoEmpresa;
     String sobreEmpresa;
     String linkWebsiteEmpresa;
     LocalDate dataEmpresaCertificada;
     UUID fkPrestadoraServico;
+
 
     public PortfolioEntity() {
 
@@ -40,6 +41,7 @@ public class PortfolioEntity {
         this.dataEmpresaCertificada = dataEmpresaCertificada;
         this.fkPrestadoraServico = fkPrestadoraServico;
     }
+
 
     public void setId(UUID id) {
         this.id = id;

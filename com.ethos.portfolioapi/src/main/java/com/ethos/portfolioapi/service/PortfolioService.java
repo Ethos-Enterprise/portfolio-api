@@ -34,10 +34,42 @@ public class PortfolioService {
         return  portfolioResponseMapper.from(savedEntity);
     }
 
-    private PortfolioEntity savePortfolio(PortfolioEntity entity) {
+    public PortfolioEntity savePortfolio(PortfolioEntity entity) {
         PortfolioEntity portfolioSaved = null;
         portfolioSaved = repository.save(entity);
         return portfolioSaved;
+    }
+    public PortfolioResponse updateUrlImagemPerfil(UUID id, String newUrlImagemPerfil) {
+            Optional<PortfolioEntity> optionalPortfolio = repository.findById(id);
+
+            if (optionalPortfolio.isPresent()) {
+                PortfolioEntity portfolio = optionalPortfolio.get();
+                portfolio.setUrlImagemPerfil(newUrlImagemPerfil);
+
+                // Save the updated entity
+                PortfolioEntity updatedPortfolio = repository.save(portfolio);
+
+                // Convert and return the updated entity as a response
+                return portfolioResponseMapper.from(updatedPortfolio);
+            } else {
+                throw new PortfolioNaoExisteException("Portfólio com o ID " + id + " não existe");
+            }
+    }
+    public PortfolioResponse updateurlBackgroundPerfil(UUID id, String newUrlBackgroundPerfil) {
+            Optional<PortfolioEntity> optionalPortfolio = repository.findById(id);
+
+            if (optionalPortfolio.isPresent()) {
+                PortfolioEntity portfolio = optionalPortfolio.get();
+                portfolio.setUrlImagemPerfil(newUrlBackgroundPerfil);
+
+                // Save the updated entity
+                PortfolioEntity updatedPortfolio = repository.save(portfolio);
+
+                // Convert and return the updated entity as a response
+                return portfolioResponseMapper.from(updatedPortfolio);
+            } else {
+                throw new PortfolioNaoExisteException("Portfólio com o ID " + id + " não existe");
+            }
     }
 
     public List<PortfolioResponse> getAllPortfolio() {
