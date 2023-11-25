@@ -1,6 +1,8 @@
 package com.ethos.portfolioapi.controller;
 
+import com.ethos.portfolioapi.controller.request.PortfolioImagemRequest;
 import com.ethos.portfolioapi.controller.request.PortfolioRequest;
+import com.ethos.portfolioapi.controller.response.PortfolioImagemResponse;
 import com.ethos.portfolioapi.controller.response.PortfolioResponse;
 import com.ethos.portfolioapi.repository.entity.PortfolioEntity;
 import com.ethos.portfolioapi.service.PortfolioService;
@@ -35,8 +37,6 @@ public class PortfolioController {
 
     public final PortfolioService portfolioService;
 
-
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PortfolioResponse postPortfolio(@RequestBody @Valid PortfolioRequest request) {
@@ -44,22 +44,7 @@ public class PortfolioController {
     }
 
     @GetMapping
-    public List<PortfolioResponse> getAllPortfolio(@RequestParam(value = "urlImagemPerfil", required = false) String urlImagemPerfil, @RequestParam(value = "urlBackgroundPerfil", required = false) String urlBackgroundPerfil, @RequestParam(value = "descricaoEmpresa", required = false) String descricaoEmpresa, @RequestParam(value = "sobreEmpresa", required = false) String sobreEmpresa, @RequestParam(value = "linkWebsiteEmpresa", required = false) String linkWebsiteEmpresa, @RequestParam(value = "dataEmpresaCertificada", required = false) LocalDate dataEmpresaCertificada, @RequestParam(value = "fkPrestadoraServico", required = false) UUID fkPrestadoraServico) {
-        if (urlImagemPerfil != null) {
-            return portfolioService.getPortfolioByUrlImagemPerfil(urlImagemPerfil);
-        } else if (urlBackgroundPerfil != null) {
-            return portfolioService.getPortfolioByUrlBackgroundPerfil(urlBackgroundPerfil);
-        } else if (descricaoEmpresa != null) {
-            return portfolioService.getPortfolioByDescricaoEmpresa(descricaoEmpresa);
-        } else if (sobreEmpresa != null) {
-            return portfolioService.getPortfolioBySobreEmpresa(sobreEmpresa);
-        } else if (linkWebsiteEmpresa != null) {
-            return portfolioService.getPortfolioByLinkWebsiteEmpresa(linkWebsiteEmpresa);
-        } else if (dataEmpresaCertificada != null) {
-            return portfolioService.getPortfolioByDataEmpresaCertificada(dataEmpresaCertificada);
-        } else if (fkPrestadoraServico != null) {
-            return portfolioService.getPortfolioByFkPrestadoraServico(fkPrestadoraServico);
-        }
+    public List<PortfolioResponse> getAllPortfolio() {
         return portfolioService.getAllPortfolio();
     }
 
@@ -68,10 +53,21 @@ public class PortfolioController {
         return portfolioService.getPortfolioById(id);
     }
 
+    @GetMapping("/prestadora/{fk}")
+    public PortfolioResponse getPortfolioByFk(@PathVariable UUID fkPrestadoraServico){
+        return portfolioService.getPortfolioByFkPrestadoraServico(fkPrestadoraServico);
+    }
+
     @PutMapping("/{id}")
     public PortfolioResponse putPortfolioById(@PathVariable UUID id, @RequestBody PortfolioRequest request) {
         return portfolioService.putPortfolioById(id, request);
     }
+
+    @PutMapping("/{id}/imagem")
+    public PortfolioImagemResponse putPortfolioImagemById(@PathVariable UUID id, @RequestParam Boolean cancelado, @RequestParam String url_imagem) {
+        return portfolioService.pilhaImagemPortfolio(url_imagem, id, false);
+    }
+
 
     @DeleteMapping("/{id}")
     public String deletePortfolioById(@PathVariable UUID id) {
@@ -96,14 +92,15 @@ public class PortfolioController {
 
         String filePath = this.diretorioBase + "/" + nomeArquivoFormatado;
         File dest = new File(filePath);
+
         try {
-            file.transferTo(dest);
+           file.transferTo(dest);
+//            portfolioService.convertFileToBase64(filePath);
         } catch (IOException e) {
             e.printStackTrace();
             throw new ResponseStatusException(422, "Não foi possível salvar o arquivo", null);
         }
 
-        // Assuming you want to update the URL of the image in the portfolio entity
         PortfolioResponse updatedPortfolio = portfolioService.updateUrlImagemPerfil(id, nomeArquivoFormatado);
 
         return ResponseEntity.status(200).body(updatedPortfolio);
@@ -129,11 +126,12 @@ public class PortfolioController {
             throw new ResponseStatusException(422, "Não foi possível salvar o arquivo", null);
         }
 
-        // Assuming you want to update the URL of the image in the portfolio entity
         PortfolioResponse updatedPortfolio = portfolioService.updateurlBackgroundPerfil(id, nomeArquivoFormatado);
 
         return ResponseEntity.status(200).body(updatedPortfolio);
     }
+
+
 
     private String formatarNomeArquivo(String nomeOriginal) {
         return String.format("%s_%s", UUID.randomUUID(), nomeOriginal);
