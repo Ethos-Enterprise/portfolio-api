@@ -1,30 +1,50 @@
 package com.ethos.portfolioapi.service;
 
+import com.ethos.portfolioapi.api.PrestadoraClient;
+import com.ethos.portfolioapi.api.prestadoraDto.PrestadoraDto;
+import com.ethos.portfolioapi.controller.request.PortfolioImagemRequest;
 import com.ethos.portfolioapi.controller.request.PortfolioRequest;
+import com.ethos.portfolioapi.controller.response.PortfolioImagemResponse;
 import com.ethos.portfolioapi.controller.response.PortfolioResponse;
+import com.ethos.portfolioapi.exception.EmpresaException;
+import com.ethos.portfolioapi.exception.EmpresaNaoExisteException;
 import com.ethos.portfolioapi.exception.PortfolioNaoExisteException;
 import com.ethos.portfolioapi.mapper.PortfolioEntityMapper;
+import com.ethos.portfolioapi.mapper.PortfolioImagemMapper;
 import com.ethos.portfolioapi.mapper.PortfolioMapper;
 import com.ethos.portfolioapi.mapper.PortfolioResponseMapper;
 import com.ethos.portfolioapi.model.Portfolio;
 import com.ethos.portfolioapi.repository.entity.PortfolioEntity;
 import com.ethos.portfolioapi.repository.PortfolioRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Import(PortfolioService.PortfolioConfig.class)
 public class PortfolioService {
 
     private final PortfolioRepository repository;
     private final PortfolioMapper portfolioModelMapper;
     private final PortfolioEntityMapper portfolioEntityMapper;
     private final PortfolioResponseMapper portfolioResponseMapper;
+    private final PortfolioPilhaObj pilhaObj;
+    private final PrestadoraClient prestadoraClient;
+    private final PortfolioEntity portfolioEntity;
+    private final PortfolioImagemMapper portfolioImagemMapper;
 
 
     public PortfolioResponse postPortfolio(PortfolioRequest request) {
@@ -35,6 +55,14 @@ public class PortfolioService {
     }
 
     public PortfolioEntity savePortfolio(PortfolioEntity entity) {
+        try{
+            PrestadoraDto prestadoraDto = prestadoraClient.getPrestadoraById(entity.getFkPrestadoraServico());
+        }catch(FeignException e){
+            if(e.status() == 404){
+                throw new EmpresaNaoExisteException("Prestadora com o ID %s não existe".formatted(entity.getFkPrestadoraServico()));
+            }
+            throw new EmpresaException("Erro ao buscar prestadora");
+        }
         PortfolioEntity portfolioSaved = null;
         portfolioSaved = repository.save(entity);
         return portfolioSaved;
@@ -73,8 +101,8 @@ public class PortfolioService {
     }
 
     public List<PortfolioResponse> getAllPortfolio() {
-        List<PortfolioEntity> portfolio = (repository.findAll());
-        return portfolio.stream().map(portfolioResponseMapper::from).toList();
+        List<PortfolioEntity> portfolios = repository.findAll();
+        return portfolios.stream().map(portfolioResponseMapper::from).toList();
     }
 
     public PortfolioResponse getPortfolioById(UUID id) {
@@ -90,12 +118,6 @@ public class PortfolioService {
         entity = repository.findById(id);
         if (entity.isEmpty()) {
             throw new PortfolioNaoExisteException("Portfólio com o id %s não existe".formatted(id));
-        }
-        if (request.urlImagemPerfil() != null && !request.urlImagemPerfil().isEmpty()) {
-            repository.updateUrlImagemPerfil(request.urlImagemPerfil(), id);
-        }
-        if (request.urlBackgroundPerfil() != null && !request.urlBackgroundPerfil().isEmpty()) {
-            repository.updateUrlBackgroundPerfil(request.urlBackgroundPerfil(), id);
         }
         if (request.descricaoEmpresa() != null && !request.descricaoEmpresa().isEmpty()) {
             repository.updateUrlDescricaoEmpresa(request.descricaoEmpresa(), id);
@@ -122,9 +144,9 @@ public class PortfolioService {
         return "Portfólio deletado com sucesso";
     }
 
-    public List<PortfolioResponse> getPortfolioByUrlImagemPerfil(String urlImagemPerfil) {
-        List<PortfolioEntity> portfolio = repository.findByUrlImagemPerfil(urlImagemPerfil);
-        return portfolio.stream().map(portfolioResponseMapper::from).toList();
+    public PortfolioResponse getPortfolioByUrlImagemPerfil(String urlImagemPerfil) {
+       PortfolioEntity portfolio = repository.findByUrlImagemPerfil(urlImagemPerfil);
+        return portfolioResponseMapper.from(portfolio);
     }
 
     public List<PortfolioResponse> getPortfolioByUrlBackgroundPerfil(String urlBackgroundPerfil) {
@@ -151,9 +173,55 @@ public class PortfolioService {
     }
 
 
-    public List<PortfolioResponse> getPortfolioByFkPrestadoraServico(UUID fkPrestadoraServico) {
-        List<PortfolioEntity> portfolio = repository.findByFkPrestadoraServico(fkPrestadoraServico);
-        return portfolio.stream().map(portfolioResponseMapper::from).toList();
+    public PortfolioResponse getPortfolioByFkPrestadoraServico(UUID fkPrestadoraServico) {
+       PortfolioEntity portfolio = repository.findByFkPrestadoraServico(fkPrestadoraServico).orElseThrow(
+               () -> new PortfolioNaoExisteException("Portfólio com o id %s não existe".formatted(fkPrestadoraServico))
+       );
+        return portfolioResponseMapper.from(portfolio);
+
+    }
+
+    public static String convertFileToBase64(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        byte[] fileBytes = Files.readAllBytes(path);
+
+        String base64String = Base64.getEncoder().encodeToString(fileBytes);
+
+        return base64String;
+    }
+
+    public PortfolioImagemResponse pilhaImagemPortfolio(String url_imagem, UUID id, Boolean cancelado) {
+        String padrao = portfolioEntity.getUrlImagemPerfil();
+        String novaImagem = url_imagem;
+
+        pilhaObj.push(new PortfolioImagemRequest(padrao, cancelado, id));
+
+        if (cancelado) {
+            pilhaObj.pop();
+        }
+
+        pilhaObj.push(new PortfolioImagemRequest(novaImagem, cancelado, id));
+        pilhaObj.push(new PortfolioImagemRequest(url_imagem, cancelado, id));
+
+        // Retorna o objeto no topo da pilha
+        PortfolioImagemResponse objetoNoTopo = pilhaObj.peek();
+
+        return objetoNoTopo;
+    }
+
+
+
+    public static class PortfolioConfig {
+
+        @Bean
+        public PortfolioPilhaObj pilhaObj() {
+            return new PortfolioPilhaObj();
+        }
+
+        @Bean
+        public PortfolioEntity portfolioEntity() {
+            return new PortfolioEntity();
+        }
     }
 
 
