@@ -1,5 +1,7 @@
 package com.ethos.portfolioapi.exceptionhandler;
 
+import com.ethos.portfolioapi.exception.EmpresaException;
+import com.ethos.portfolioapi.exception.EmpresaNaoExisteException;
 import com.ethos.portfolioapi.exception.PortfolioJaExisteException;
 import com.ethos.portfolioapi.exception.PortfolioNaoExisteException;
 import org.springframework.http.HttpStatus;
@@ -56,6 +58,24 @@ public class PortfolioExceptionHandler {
         final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(exception.getMessage());
         problemDetail.setTitle("Portfolio já cadastrado");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(EmpresaNaoExisteException.class)
+    public ProblemDetail empresaNaoExiste(EmpresaNaoExisteException exception) {
+        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setDetail(exception.getMessage());
+        problemDetail.setTitle("Empresa não encontrada");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(EmpresaException.class)
+    public ProblemDetail empresaException(EmpresaException exception) {
+        final ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setDetail(exception.getMessage());
+        problemDetail.setTitle("Erro ao buscar prestadora");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }

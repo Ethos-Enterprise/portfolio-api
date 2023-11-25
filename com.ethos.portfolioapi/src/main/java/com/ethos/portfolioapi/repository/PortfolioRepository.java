@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -44,13 +45,12 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, UUID
     @Query("update PortfolioEntity p set p.dataEmpresaCertificada = ?1 where p.id = ?2")
     void updateUrlDataEmpresaCertificada(@NonNull LocalDate dataEmpresaCertificada, @NonNull UUID id);
 
-    List<PortfolioEntity> findByUrlImagemPerfil(String urlImagemPerfil);
+    PortfolioEntity findByUrlImagemPerfil(String urlImagemPerfil);
     List<PortfolioEntity> findByUrlBackgroundPerfil(String urlBackgroundPerfil);
     List<PortfolioEntity> findByDescricaoEmpresa(String descricaoEmpresa);
     List<PortfolioEntity> findBySobreEmpresa(String sobreEmpresa);
     List<PortfolioEntity> findByLinkWebsiteEmpresa(String linkWebsiteEmpresa);
     List<PortfolioEntity> findByDataEmpresaCertificada(LocalDate dataEmpresaCertificada);
-    List<PortfolioEntity> findByFkPrestadoraServico(UUID fkPrestadoraServico);
-
+    Optional <PortfolioEntity> findByFkPrestadoraServico(UUID fkPrestadoraServico);
 }
 

@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PortfolioEntity {
     @Id
     UUID id;
-    public String urlImagemPerfil;
+    String urlImagemPerfil;
     String urlBackgroundPerfil;
     String descricaoEmpresa;
     String sobreEmpresa;
