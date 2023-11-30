@@ -31,7 +31,7 @@ public class PortfolioEntity {
 
     @Builder(toBuilder = true)
 
-    public PortfolioEntity(UUID id, String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
+    public PortfolioEntity(String urlImagemPerfil, String urlBackgroundPerfil, String descricaoEmpresa, String sobreEmpresa, String linkWebsiteEmpresa, LocalDate dataEmpresaCertificada, UUID fkPrestadoraServico) {
         this.id = UUID.randomUUID();
         this.urlImagemPerfil = urlImagemPerfil;
         this.urlBackgroundPerfil = urlBackgroundPerfil;

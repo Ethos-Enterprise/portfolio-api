@@ -63,8 +63,7 @@ public class PortfolioService {
             }
             throw new EmpresaException("Erro ao buscar prestadora");
         }
-        PortfolioEntity portfolioSaved = null;
-        portfolioSaved = repository.save(entity);
+        PortfolioEntity portfolioSaved = repository.save(entity);
         return portfolioSaved;
     }
     public PortfolioResponse updateUrlImagemPerfil(UUID id, String newUrlImagemPerfil) {
