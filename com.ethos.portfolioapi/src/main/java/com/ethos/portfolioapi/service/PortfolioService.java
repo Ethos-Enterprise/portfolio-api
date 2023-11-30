@@ -109,7 +109,9 @@ public class PortfolioService {
         if (portfolio.isEmpty()) {
             throw new PortfolioNaoExisteException("Empresa com id %s não existe".formatted(id.toString()));
         }
-        return portfolio.map(portfolioResponseMapper::from).get();
+        PortfolioEntity portfolioReturned = portfolio.get();
+        PortfolioResponse portfolioResponse = portfolioResponseMapper.from(portfolioReturned);
+        return portfolioResponse;
     }
 
     public PortfolioResponse putPortfolioById(UUID id, PortfolioRequest request) {

@@ -3,18 +3,28 @@ package com.ethos.portfolioapi.service;
 import com.ethos.portfolioapi.api.PrestadoraClient;
 import com.ethos.portfolioapi.api.prestadoraDto.PrestadoraDto;
 import com.ethos.portfolioapi.controller.request.PortfolioRequest;
-import com.ethos.portfolioapi.mapper.PortfolioEntityMapper;
-import com.ethos.portfolioapi.mapper.PortfolioImagemMapper;
-import com.ethos.portfolioapi.mapper.PortfolioMapper;
-import com.ethos.portfolioapi.mapper.PortfolioResponseMapper;
+import com.ethos.portfolioapi.controller.response.PortfolioResponse;
+import com.ethos.portfolioapi.exception.EmpresaException;
+import com.ethos.portfolioapi.exception.EmpresaNaoExisteException;
+import com.ethos.portfolioapi.exception.PortfolioNaoExisteException;
+import com.ethos.portfolioapi.mapper.*;
+import com.ethos.portfolioapi.mapper.PortfolioEntityMapperImpl;
+import com.ethos.portfolioapi.mapper.PortfolioImagemMapperImpl;
+import com.ethos.portfolioapi.mapper.PortfolioMapperImpl;
+import com.ethos.portfolioapi.mapper.PortfolioResponseMapperImpl;
 import com.ethos.portfolioapi.repository.PortfolioRepository;
 import com.ethos.portfolioapi.repository.entity.PortfolioEntity;
+import feign.FeignException;
+import feign.Headers;
+import feign.Request;
+import feign.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,16 +43,16 @@ class PortfolioServiceTest {
     PrestadoraClient prestadoraClient;
 
     @Spy
-    PortfolioMapper portfolioMapper;
+    PortfolioMapper portfolioMapper = new PortfolioMapperImpl();
 
     @Spy
-    PortfolioImagemMapper portfolioImagemMapper;
+    PortfolioImagemMapper portfolioImagemMapper = new PortfolioImagemMapperImpl();
 
     @Spy
-    PortfolioEntityMapper portfolioEntityMapper;
+    PortfolioEntityMapper portfolioEntityMapper = new PortfolioEntityMapperImpl();
 
     @Spy
-    PortfolioResponseMapper portfolioResponseMapper;
+    PortfolioResponseMapper portfolioResponseMapper = new PortfolioResponseMapperImpl();
 
     @Captor
     ArgumentCaptor<UUID> idClienteArgumentCaptor;
@@ -93,66 +103,90 @@ class PortfolioServiceTest {
     }
 
     @Test
-    void savePortfolio() {
+    void should_throws_EmpresaNaoExisteException() {
+        PortfolioEntity entity = createPortfolioEntity();
+        FeignException feignException = FeignException.errorStatus("Prestadora não existe",
+                Response.builder()
+                        .status(404)
+                        .reason("Not Found")
+                        .request(Request.create(Request.HttpMethod.GET, "", Map.of(), null, null, null))
+                        .build());
+        when(prestadoraClient.getPrestadoraById(idClienteArgumentCaptor.capture())).thenThrow(feignException);
+
+        EmpresaNaoExisteException e = assertThrows(EmpresaNaoExisteException.class, () -> service.savePortfolio(entity));
+
+        assertEquals(e.getMessage(), "Prestadora com o ID 62b3105b-4d0e-4b98-bbca-19991ebcb0b8 não existe");
     }
 
     @Test
-    void updateUrlImagemPerfil() {
+    void should_return_all_portfolios() {
+        PortfolioEntity entity = createPortfolioEntity();
+        when(repository.findAll()).thenReturn(java.util.List.of(entity));
+
+        var portfolios = service.getAllPortfolio();
+
+        assertEquals(portfolios.size(), 1);
     }
 
     @Test
-    void updateurlBackgroundPerfil() {
+    void should_throws_PortfolioNaoExisteException() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(java.util.Optional.empty());
+
+        PortfolioNaoExisteException e = assertThrows(PortfolioNaoExisteException.class, () -> service.getPortfolioById(id));
+
+        assertEquals(e.getMessage(), "Empresa com id %s não existe".formatted(id.toString()));
     }
 
     @Test
-    void getAllPortfolio() {
+    void should_return_a_portfolio_by_id() {
+        PortfolioEntity entity = createPortfolioEntity();
+        when(repository.findById(entity.getId())).thenReturn(java.util.Optional.of(entity));
+
+        PortfolioResponse portfolio = service.getPortfolioById(entity.getId());
+
+        assertEquals(portfolio.id(), entity.getId());
     }
 
     @Test
-    void getPortfolioById() {
+    void should_update_url_imagem_perfil() {
+        PortfolioEntity entity = createPortfolioEntity();
+        when(repository.findById(entity.getId())).thenReturn(java.util.Optional.of(entity));
+        when(repository.save(portfolioEntityArgumentCaptor.capture())).thenReturn(entity);
+
+        PortfolioResponse portfolio = service.updateUrlImagemPerfil(entity.getId(), "imagem.jpg");
+
+        assertEquals(portfolio.urlImagemPerfil(), "imagem.jpg");
     }
 
     @Test
-    void putPortfolioById() {
+    void should_update_url_background_perfil() {
+        PortfolioEntity entity = createPortfolioEntity();
+        when(repository.findById(entity.getId())).thenReturn(java.util.Optional.of(entity));
+        when(repository.save(portfolioEntityArgumentCaptor.capture())).thenReturn(entity);
+
+        PortfolioResponse portfolio = service.updateurlBackgroundPerfil(entity.getId(), "imagemBackground.jpg");
+
+        assertEquals(portfolio.urlBackgroundPerfil(), "imagemBackground.jpg");
     }
 
     @Test
-    void deletePortfolioById() {
+    void should_throws_PortfolioNaoExisteException_when_update_url_imagem_perfil() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(java.util.Optional.empty());
+
+        PortfolioNaoExisteException e = assertThrows(PortfolioNaoExisteException.class, () -> service.updateUrlImagemPerfil(id, "imagem.jpg"));
+
+        assertEquals(e.getMessage(), "Portfólio com o ID %s não existe".formatted(id));
     }
 
     @Test
-    void getPortfolioByUrlImagemPerfil() {
-    }
+    void should_throws_PortfolioNaoExisteException_when_update_url_background_perfil() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(java.util.Optional.empty());
 
-    @Test
-    void getPortfolioByUrlBackgroundPerfil() {
-    }
+        PortfolioNaoExisteException e = assertThrows(PortfolioNaoExisteException.class, () -> service.updateurlBackgroundPerfil(id, "imagemBackground.jpg"));
 
-    @Test
-    void getPortfolioByDescricaoEmpresa() {
-    }
-
-    @Test
-    void getPortfolioBySobreEmpresa() {
-    }
-
-    @Test
-    void getPortfolioByLinkWebsiteEmpresa() {
-    }
-
-    @Test
-    void getPortfolioByDataEmpresaCertificada() {
-    }
-
-    @Test
-    void getPortfolioByFkPrestadoraServico() {
-    }
-
-    @Test
-    void convertFileToBase64() {
-    }
-
-    @Test
-    void pilhaImagemPortfolio() {
+        assertEquals(e.getMessage(), "Portfólio com o ID %s não existe".formatted(id));
     }
 }
