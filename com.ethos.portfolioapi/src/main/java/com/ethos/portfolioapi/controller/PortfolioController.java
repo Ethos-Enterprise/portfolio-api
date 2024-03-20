@@ -53,7 +53,7 @@ public class PortfolioController {
         return portfolioService.getPortfolioById(id);
     }
 
-    @GetMapping("/prestadora/{fk}")
+    @GetMapping("/prestadora/{fkPrestadoraServico}")
     public PortfolioResponse getPortfolioByFk(@PathVariable UUID fkPrestadoraServico){
         return portfolioService.getPortfolioByFkPrestadoraServico(fkPrestadoraServico);
     }

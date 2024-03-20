@@ -50,7 +50,8 @@ public class PortfolioService {
     public PortfolioResponse postPortfolio(PortfolioRequest request) {
         Portfolio model = portfolioModelMapper.from(request);
         PortfolioEntity entity = portfolioEntityMapper.from(model);
-        PortfolioEntity savedEntity = savePortfolio(entity);
+//        PortfolioEntity savedEntity = savePortfolio(entity);
+        PortfolioEntity savedEntity = repository.save(entity);
         return  portfolioResponseMapper.from(savedEntity);
     }
 
