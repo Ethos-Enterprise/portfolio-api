@@ -1,0 +1,11 @@
+services:
+  postgres-portfolio:
+    image: postgres
+    container_name: postgres-portfolio
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha123
+    ports:
+      - "5439:5432"
+volumes:
+  postgres-data:
