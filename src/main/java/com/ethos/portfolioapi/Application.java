@@ -11,6 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class Application {
 
 	public static void main(String[] args) {
+		System.out.println("Teste watchtower");
 		SpringApplication.run(Application.class, args);
 	}
 
